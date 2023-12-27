@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click the Bar Game</title>
+  <style>
+    #game-container {
+      position: relative;
+      width: 400px;
+      height: 400px;
+      border: 1px solid #000;
+    }
+
+    .bar {
+      position: absolute;
+      width: 50px;
+      height: 20px;
+      background-color: #3498db;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<button onclick="startGame()">Start Game</button>
+<p>Score: <span id="score">0</span></p>
+
+<div id="game-container"></div>
+
+<script>
+let score = 0;
+let gameInterval;
+
+function startGame() {
+  score = 0;
+  document.getElementById('score').innerText = score;
+  clearInterval(gameInterval);
+  gameInterval = setInterval(dropBar, 1000);
+}
+
+function dropBar() {
+  const gameContainer = document.getElementById('game-container');
+  const bar = document.createElement('div');
+  bar.className = 'bar';
+  bar.style.left = Math.floor(Math.random() * (gameContainer.clientWidth - 50)) + 'px';
+  gameContainer.appendChild(bar);
+
+  const startTime = new Date().getTime();
+
+  function moveBar() {
+    const currentTime = new Date().getTime();
+    const elapsedTime = currentTime - startTime;
+    const distance = (elapsedTime / 3000) * 400;
+    bar.style.top = distance + 'px';
+
+    if (distance >= 380) {
+      gameContainer.removeChild(bar);
+      updateScore(false);
+      clearInterval(barMoveInterval);
+    }
+  }
+
+  const barMoveInterval = setInterval(moveBar, 10);
+
+  bar.onclick = function () {
+    gameContainer.removeChild(bar);
+    updateScore(true);
+    clearInterval(barMoveInterval);
+  };
+}
+
+function updateScore(isSuccessful) {
+  if (isSuccessful) {
+    score++;
+  } else {
+    score = Math.max(0, score - 1);
+  }
+
+  document.getElementById('score').innerText = score;
+}
+
+</script>
+
+</body>
+</html>
